@@ -66,7 +66,7 @@ function App() {
         <button type="submit" className="font-[700] text-[20px]">Add</button>
       </form>
       {/* Todos */}
-      <div className="grid grid-cols-2 gap-3 p-4">
+      <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-3 p-4">
         {todos.map((e) => {
           return (
             <div
@@ -129,7 +129,7 @@ function App() {
             <form
               onSubmit={() => {
                 if (textEdit.trim().length != 0) {
-                  const newTodo = todos.map(el => {
+                  const newTodo:any = todos.map(el => {
                   if (el.id == idx) {
                     el.title = textEdit;
                   }
