@@ -1,10 +1,10 @@
-import { useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import "./App.css";
 import { TbHttpDelete } from "react-icons/tb";
 import { LuFileEdit } from "react-icons/lu";
 import { MdClose } from "react-icons/md";
 
-interface Todo {
+interface ITodo {
   id: number;
   title: string;
   completed: boolean;
@@ -13,7 +13,7 @@ interface Todo {
 
 function App() {
   // get
-  const [todos, setTodos] = useState<Todo[]>([
+  const [todos, setTodos] = useState<ITodo[]>([
     {
       id: 1,
       title: "One",
@@ -34,7 +34,7 @@ function App() {
   const [idx, setIdx] = useState<number>(0);
   const [editedText, setEditedText] = useState<string>("");
 
-  const windowOnclick = useRef();
+  const windowOnclick = React.useRef();
 
   return (
     <>
@@ -64,7 +64,9 @@ function App() {
           placeholder="Title:"
           type="text"
           value={text}
-          onChange={(event) => setText(event.target.value)}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            setText(event.target.value)
+          }
           required
         />
         <button type="submit" className="font-[700] text-[20px]">
@@ -73,7 +75,7 @@ function App() {
       </form>
       {/* Todos */}
       <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-3 p-4">
-        {todos.map((e) => {
+        {todos.map((e: ITodo) => {
           return (
             <div
               key={e.id}
@@ -82,17 +84,21 @@ function App() {
               {/* name */}
               <div className="border flex items-center justify-center relative">
                 {e.completed ? (
-                  <div className="text-green-600 font-[700] text-[28px] text-center">
+                  <div className="text-sky-500 font-[700] text-[28px] text-center">
                     <p className=" line-through ">{e.title}</p>
                     {e.edited ? (
-                      <p className="text-sky-500 font-[800] text-[12px] absolute top-1 right-2">Edited</p>
+                      <p className="text-sky-500 font-[800] text-[12px] absolute top-1 right-2">
+                        Edited
+                      </p>
                     ) : null}
                   </div>
                 ) : (
                   <div className="font-[700] text-[28px] text-center">
                     <p>{e.title}</p>
                     {e.edited ? (
-                      <p className="text-sky-500 font-[800] text-[12px] absolute top-1 right-2">Edited</p>
+                      <p className="text-sky-500 font-[800] text-[12px] absolute top-1 right-2">
+                        Edited
+                      </p>
                     ) : null}
                   </div>
                 )}
@@ -102,7 +108,7 @@ function App() {
                 {/* delete */}
                 <button
                   onClick={() => {
-                    const newTodo = todos.filter((el) => {
+                    const newTodo = todos.filter((el: ITodo) => {
                       return el.id != e.id;
                     });
                     setTodos(newTodo);
@@ -127,7 +133,7 @@ function App() {
                   type="checkbox"
                   checked={e.completed}
                   onClick={() => {
-                    const newTodo = todos.map((el) => {
+                    const newTodo = todos.map((el: ITodo) => {
                       if (el.id == e.id) el.completed = !el.completed;
                       return el;
                     });
@@ -142,7 +148,9 @@ function App() {
         {modal ? (
           <div
             ref={windowOnclick}
-            onClick={(event) => {
+            onClick={(
+              event: React.MouseEvent<HTMLDivElement, MouseEvent>
+            ): void => {
               if (event.target == windowOnclick.current) setModal(false);
             }}
             className="absolute flex items-center justify-center top-0 bg-black/60 w-full h-screen left-0"
@@ -150,7 +158,7 @@ function App() {
             <form
               onSubmit={() => {
                 if (textEdit.trim().length != 0) {
-                  const newTodo: any = todos.map((el) => {
+                  const newTodo: any = todos.map((el: ITodo) => {
                     if (el.id == idx) {
                       el.title = textEdit;
                       if (editedText != textEdit) el.edited = true;
@@ -175,7 +183,9 @@ function App() {
                 required
                 type="text"
                 className="border text-black mt-6 rounded-[5px_0_5px_0]"
-                onChange={(event) => setTextEdit(event.target.value)}
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  setTextEdit(event.target.value)
+                }
               />
               <button className="font-[700] text-[20px] mt-3">Edit</button>
             </form>
