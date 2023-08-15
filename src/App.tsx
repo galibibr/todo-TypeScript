@@ -4,11 +4,11 @@ import { TbHttpDelete } from "react-icons/tb";
 import { LuFileEdit } from "react-icons/lu";
 import { MdClose } from "react-icons/md";
 
-
 interface Todo {
   id: number;
   title: string;
   completed: boolean;
+  edited: boolean;
 }
 
 function App() {
@@ -18,20 +18,23 @@ function App() {
       id: 1,
       title: "One",
       completed: false,
+      edited: false,
     },
     {
       id: 2,
       title: "Two",
       completed: true,
+      edited: false,
     },
   ]);
 
   const [text, setText] = useState<string>("");
   const [modal, setModal] = useState<boolean>(false);
   const [textEdit, setTextEdit] = useState<string>("");
-  const [idx, setIdx] = useState<number>(0)
+  const [idx, setIdx] = useState<number>(0);
+  const [editedText, setEditedText] = useState<string>("");
 
-  const windowOnclick = useRef()
+  const windowOnclick = useRef();
 
   return (
     <>
@@ -40,16 +43,17 @@ function App() {
         onSubmit={() => {
           if (text.trim().length != 0) {
             {
-            setTodos([
-              ...todos,
-              {
-                id: Date.now(),
-                title: text,
-                completed: false,
-              },
-            ]);
-          }
-          setText("");
+              setTodos([
+                ...todos,
+                {
+                  id: Date.now(),
+                  title: text,
+                  completed: false,
+                  edited: false,
+                },
+              ]);
+            }
+            setText("");
           }
         }}
         action="#"
@@ -63,7 +67,9 @@ function App() {
           onChange={(event) => setText(event.target.value)}
           required
         />
-        <button type="submit" className="font-[700] text-[20px]">Add</button>
+        <button type="submit" className="font-[700] text-[20px]">
+          Add
+        </button>
       </form>
       {/* Todos */}
       <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-3 p-4">
@@ -74,13 +80,23 @@ function App() {
               className="border rounded-[10px_0_10px_0] bg-gray-100 shadow-md"
             >
               {/* name */}
-              {e.completed ? (
-                <p className="text-green-600 line-through font-[700] text-[28px] text-center">
-                  {e.title}
-                </p>
-              ) : (
-                <p className="font-[700] text-[28px] text-center">{e.title}</p>
-              )}
+              <div className="border flex items-center justify-center relative">
+                {e.completed ? (
+                  <div className="text-green-600 font-[700] text-[28px] text-center">
+                    <p className=" line-through ">{e.title}</p>
+                    {e.edited ? (
+                      <p className="text-sky-500 font-[800] text-[12px] absolute top-1 right-2">Edited</p>
+                    ) : null}
+                  </div>
+                ) : (
+                  <div className="font-[700] text-[28px] text-center">
+                    <p>{e.title}</p>
+                    {e.edited ? (
+                      <p className="text-sky-500 font-[800] text-[12px] absolute top-1 right-2">Edited</p>
+                    ) : null}
+                  </div>
+                )}
+              </div>
               {/* btns */}
               <div className="flex justify-between px-3 pb-3 pt-2 bg-black/40 text-white rounded-[0_0_10px_0]">
                 {/* delete */}
@@ -101,6 +117,7 @@ function App() {
                     setModal(true);
                     setTextEdit(e.title);
                     setIdx(e.id);
+                    setEditedText(e.title);
                   }}
                 >
                   <LuFileEdit></LuFileEdit>
@@ -123,27 +140,35 @@ function App() {
         })}
         {/* modal edit */}
         {modal ? (
-          <div ref={windowOnclick} onClick={(event) => {
-            if (event.target == windowOnclick.current) setModal(false)
-          }} className="absolute flex items-center justify-center top-0 bg-black/60 w-full h-screen left-0">
+          <div
+            ref={windowOnclick}
+            onClick={(event) => {
+              if (event.target == windowOnclick.current) setModal(false);
+            }}
+            className="absolute flex items-center justify-center top-0 bg-black/60 w-full h-screen left-0"
+          >
             <form
               onSubmit={() => {
                 if (textEdit.trim().length != 0) {
-                  const newTodo:any = todos.map(el => {
-                  if (el.id == idx) {
-                    el.title = textEdit;
-                  }
-                  return el
-                })
-                setModal(false);
-                setTodos(newTodo);
+                  const newTodo: any = todos.map((el) => {
+                    if (el.id == idx) {
+                      el.title = textEdit;
+                      if (editedText != textEdit) el.edited = true;
+                    }
+                    return el;
+                  });
+                  setModal(false);
+                  setTodos(newTodo);
                 }
               }}
               action="#"
               className="bg-black/60 shadow-dm shadow-[white] text-white flex flex-col px-5 pb-8 rounded-[20px_0_20px_0]"
             >
               <div className="flex justify-end mt-2 text-white text-[25px]">
-                <MdClose onClick={() => setModal(false)} className='cursor-pointer'></MdClose>
+                <MdClose
+                  onClick={() => setModal(false)}
+                  className="cursor-pointer"
+                ></MdClose>
               </div>
               <input
                 value={textEdit}
