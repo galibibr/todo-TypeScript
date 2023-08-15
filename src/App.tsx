@@ -34,7 +34,7 @@ function App() {
   const [idx, setIdx] = useState<number>(0);
   const [editedText, setEditedText] = useState<string>("");
 
-  const windowOnclick = React.useRef();
+  const windowOnclick = useRef<HTMLHeadingElement>();
 
   return (
     <>
